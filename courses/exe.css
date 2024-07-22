@@ -1,0 +1,136 @@
+/* General styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto; /* กำหนดให้ main ยืดขยายเต็มพื้นที่ที่เหลือ */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+
+/* Exercise Page Styles */
+.course-exercise-container {
+    margin-top: 20px;
+}
+
+.exercise-header {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.exercise-header img {
+    max-width: 150px;
+    margin-right: 20px;
+    border-radius: 10px;
+}
+
+.exercise-header h3 {
+    flex-grow: 1;
+    margin: 0;
+    font-size: 24px;
+}
+
+.exercise-number {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.exercise {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.form-check {
+    margin-bottom: 15px;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn {
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #6c63ff;
+    border-color: #6c63ff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #5548c8;
+    border-color: #5548c8;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .exercise-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .exercise-header img {
+        margin-bottom: 20px;
+    }
+
+    .btn-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-group .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

@@ -1,0 +1,289 @@
+ระบบ sesion
+ระบบ auth ดีๆ
+ระบบ load balancer
+เขียน headder ใช้ http
+
+
+. การทำงานของ API Server
+
+	•	การออกแบบ RESTful API
+	•	HTTP Methods (GET, POST, PUT, DELETE, PATCH)
+	•	RESTful Routes
+	•	การใช้ JSON สำหรับการรับและส่งข้อมูล
+	•	Authentication & Authorization
+	•	JWT (JSON Web Tokens)
+	•	OAuth2
+	•	การจัดการข้อผิดพลาด (Error Handling)
+	•	HTTP Status Codes
+	•	การจัดการ Exceptions
+	•	การทดสอบ API
+	•	Postman
+	•	Insomnia
+	•	Automated API Testing
+
+2. Network
+
+	•	การทำงานของ HTTP/HTTPS
+	•	Difference between HTTP and HTTPS
+	•	SSL/TLS Certificates
+	•	การทำงานของ DNS
+	•	DNS Resolution
+	•	Types of DNS Records (A, CNAME, MX, TXT)
+	•	Load Balancing
+	•	Types of Load Balancers
+	•	Round Robin, Least Connections
+	•	การจัดการเซสชัน (Session Management)
+	•	Cookies
+	•	Session Storage
+
+3. SQL Queries
+
+	•	พื้นฐาน SQL
+	•	SELECT, INSERT, UPDATE, DELETE
+	•	WHERE, JOIN, GROUP BY, ORDER BY
+	•	Advanced SQL
+	•	Subqueries
+	•	Common Table Expressions (CTEs)
+	•	Window Functions
+	•	การปรับปรุงประสิทธิภาพ (Performance Optimization)
+	•	Indexing
+	•	Query Execution Plans
+	•	Database Normalization & Denormalization
+
+4. Database Management
+
+	•	การออกแบบฐานข้อมูล (Database Design)
+	•	Entity-Relationship Diagrams (ERDs)
+	•	Normalization (1NF, 2NF, 3NF)
+	•	Database Management Systems (DBMS)
+	•	MySQL, PostgreSQL, SQLite
+	•	การสำรองข้อมูลและการกู้คืน (Backup & Recovery)
+	•	Regular Backups
+	•	Point-in-time Recovery
+
+5. Method Request and Response
+
+	•	HTTP Methods
+	•	Safe and Idempotent Methods
+	•	Use Cases for Each Method
+	•	Request Headers and Body
+	•	Content-Type
+	•	Authorization
+	•	Custom Headers
+	•	Response Codes and Headers
+	•	Success (2xx)
+	•	Client Errors (4xx)
+	•	Server Errors (5xx)
+
+6. Web Development
+
+	•	Frontend Development
+	•	HTML, CSS, JavaScript
+	•	Frontend Frameworks (React, Angular, Vue.js)
+	•	Responsive Design
+	•	Backend Development
+	•	Server-side Languages (PHP, Node.js, Python)
+	•	MVC Architecture
+	•	Templating Engines (Twig, EJS)
+
+7. Authentication and Authorization
+
+	•	User Authentication
+	•	Username/Password
+	•	Multi-Factor Authentication (MFA)
+	•	Authorization Mechanisms
+	•	Role-Based Access Control (RBAC)
+	•	Permissions Management
+
+8. Security Practices
+
+	•	SQL Injection Prevention
+	•	Prepared Statements
+	•	Parameterized Queries
+	•	Cross-Site Scripting (XSS)
+	•	Input Sanitization
+	•	Output Encoding
+	•	Cross-Site Request Forgery (CSRF)
+	•	CSRF Tokens
+
+9. DevOps and Deployment
+
+	•	Continuous Integration/Continuous Deployment (CI/CD)
+	•	Jenkins, Travis CI, GitHub Actions
+	•	Containerization
+	•	Docker
+	•	Kubernetes
+	•	Cloud Services
+	•	AWS, Azure, Google Cloud Platform (GCP)
+
+10. Performance Optimization
+
+	•	Caching Mechanisms
+	•	Browser Caching
+	•	Server-Side Caching (Redis, Memcached)
+	•	Asynchronous Processing
+	•	Background Jobs (Celery, Sidekiq)
+	•	Web Workers
+
+11. User Experience (UX) and User Interface (UI)
+
+	•	UX/UI Design Principles
+	•	Usability
+	•	Accessibility
+	•	Design Tools
+	•	Figma
+	•	Adobe XD
+	•	Prototyping and Wireframing
+
+12. Testing and Quality Assurance
+
+	•	Unit Testing
+	•	PHPUnit (สำหรับ PHP)
+	•	Jest (สำหรับ JavaScript)
+	•	Integration Testing
+	•	Cypress
+	•	Selenium
+	•	User Acceptance Testing (UAT)
+
+13. Documentation
+
+	•	API Documentation
+	•	OpenAPI/Swagger
+	•	Postman Collections
+	•	Code Documentation
+	•	PHPDoc (สำหรับ PHP)
+	•	JSDoc (สำหรับ JavaScript)
+	•	Project Documentation
+	•	README Files
+	•	Wikis
+
+14. Version Control
+
+	•	Git Basics
+	•	Commits, Branches, Merges
+	•	Collaboration Workflows
+	•	Git Flow
+	•	Pull Requests
+
+15. Monitoring and Logging
+
+	•	Application Monitoring
+	•	New Relic, Datadog
+	•	Logging Practices
+	•	Log Levels (INFO, DEBUG, ERROR)
+	•	Log Management Tools (ELK Stack, Splunk)
+
+16. Scalability and Load Testing
+
+	•	Horizontal and Vertical Scaling
+	•	Load Testing Tools
+	•	Apache JMeter
+	•	LoadRunner
+
+17. Project Management
+
+	•	Agile Methodologies
+	•	Scrum, Kanban
+	•	Task Management Tools
+	•	Jira, Trello
+	•	Documentation and Collaboration Tools
+	•	Confluence, Notion
+
+
+    ารทำงานของ API Server
+
+	•	การออกแบบ RESTful API: วิธีการใช้ HTTP Methods (GET, POST, PUT, DELETE, PATCH), RESTful Routes, และการใช้ JSON สำหรับการรับและส่งข้อมูล
+	•	Authentication & Authorization: JWT (JSON Web Tokens), OAuth2
+	•	การจัดการข้อผิดพลาด (Error Handling): HTTP Status Codes, การจัดการ Exceptions
+	•	การทดสอบ API: Postman, Insomnia, Automated API Testing
+
+2. Network
+
+	•	การทำงานของ HTTP/HTTPS: ความแตกต่างระหว่าง HTTP และ HTTPS, SSL/TLS Certificates
+	•	การทำงานของ DNS: DNS Resolution, Types of DNS Records (A, CNAME, MX, TXT)
+	•	Load Balancing: Types of Load Balancers, Round Robin, Least Connections
+	•	การจัดการเซสชัน (Session Management): Cookies, Session Storage
+
+3. SQL Queries
+
+	•	พื้นฐาน SQL: SELECT, INSERT, UPDATE, DELETE, WHERE, JOIN, GROUP BY, ORDER BY
+	•	Advanced SQL: Subqueries, Common Table Expressions (CTEs), Window Functions
+	•	การปรับปรุงประสิทธิภาพ (Performance Optimization): Indexing, Query Execution Plans, Database Normalization & Denormalization
+
+4. Database Management
+
+	•	การออกแบบฐานข้อมูล (Database Design): Entity-Relationship Diagrams (ERDs), Normalization (1NF, 2NF, 3NF)
+	•	Database Management Systems (DBMS): MySQL, PostgreSQL, SQLite
+	•	การสำรองข้อมูลและการกู้คืน (Backup & Recovery): Regular Backups, Point-in-time Recovery
+
+5. Method Request and Response
+
+	•	HTTP Methods: Safe and Idempotent Methods, Use Cases for Each Method
+	•	Request Headers and Body: Content-Type, Authorization, Custom Headers
+	•	Response Codes and Headers: Success (2xx), Client Errors (4xx), Server Errors (5xx)
+
+6. Web Development
+
+	•	Frontend Development: HTML, CSS, JavaScript, Frontend Frameworks (React, Angular, Vue.js), Responsive Design
+	•	Backend Development: Server-side Languages (PHP, Node.js, Python), MVC Architecture, Templating Engines (Twig, EJS)
+
+7. Authentication and Authorization
+
+	•	User Authentication: Username/Password, Multi-Factor Authentication (MFA)
+	•	Authorization Mechanisms: Role-Based Access Control (RBAC), Permissions Management
+
+8. Security Practices
+
+	•	SQL Injection Prevention: Prepared Statements, Parameterized Queries
+	•	Cross-Site Scripting (XSS): Input Sanitization, Output Encoding
+	•	Cross-Site Request Forgery (CSRF): CSRF Tokens
+
+9. DevOps and Deployment
+
+	•	Continuous Integration/Continuous Deployment (CI/CD): Jenkins, Travis CI, GitHub Actions
+	•	Containerization: Docker, Kubernetes
+	•	Cloud Services: AWS, Azure, Google Cloud Platform (GCP)
+
+10. Performance Optimization
+
+	•	Caching Mechanisms: Browser Caching, Server-Side Caching (Redis, Memcached)
+	•	Asynchronous Processing: Background Jobs (Celery, Sidekiq), Web Workers
+
+11. User Experience (UX) and User Interface (UI)
+
+	•	UX/UI Design Principles: Usability, Accessibility
+	•	Design Tools: Figma, Adobe XD
+	•	Prototyping and Wireframing
+
+12. Testing and Quality Assurance
+
+	•	Unit Testing: PHPUnit (สำหรับ PHP), Jest (สำหรับ JavaScript)
+	•	Integration Testing: Cypress, Selenium
+	•	User Acceptance Testing (UAT)
+
+13. Documentation
+
+	•	API Documentation: OpenAPI/Swagger, Postman Collections
+	•	Code Documentation: PHPDoc (สำหรับ PHP), JSDoc (สำหรับ JavaScript)
+	•	Project Documentation: README Files, Wikis
+
+14. Version Control
+
+	•	Git Basics: Commits, Branches, Merges
+	•	Collaboration Workflows: Git Flow, Pull Requests
+
+15. Monitoring and Logging
+
+	•	Application Monitoring: New Relic, Datadog
+	•	Logging Practices: Log Levels (INFO, DEBUG, ERROR), Log Management Tools (ELK Stack, Splunk)
+
+16. Scalability and Load Testing
+
+	•	Horizontal and Vertical Scaling
+	•	Load Testing Tools: Apache JMeter, LoadRunner
+
+17. Project Management
+
+	•	Agile Methodologies: Scrum, Kanban
+	•	Task Management Tools: Jira, Trello
+	•	Documentation and Collaboration Tools: Confluence, Notion

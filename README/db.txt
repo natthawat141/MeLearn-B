@@ -1,0 +1,55 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    video_url VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE exercises (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT,
+    question TEXT NOT NULL,
+    option1 VARCHAR(255) NOT NULL,
+    option2 VARCHAR(255) NOT NULL,
+    option3 VARCHAR(255) NOT NULL,
+    option4 VARCHAR(255) NOT NULL,
+    correct_answer INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+CREATE TABLE user_courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    course_id INT,
+    completed BOOLEAN DEFAULT FALSE,
+    certificate_issued BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+CREATE TABLE redeem_codes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20) UNIQUE NOT NULL,
+    course_id INT,
+    is_used BOOLEAN DEFAULT FALSE,
+    used_by INT,
+    FOREIGN KEY (course_id) REFERENCES courses(id),
+    FOREIGN KEY (used_by) REFERENCES users(id)
+);
+CREATE TABLE user_questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    question TEXT NOT NULL,
+    answer TEXT,
+    status ENUM('pending', 'answered') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    answered_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

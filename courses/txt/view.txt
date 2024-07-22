@@ -1,0 +1,153 @@
+<!-- view.php -->
+<?php
+session_start();
+require_once '../config/database.php';
+include 'includes/course_header.php';
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit();
+}
+
+$course_id = $_GET['id'];
+$user_id = $_SESSION['user_id'];
+
+$stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
+$stmt->execute([$course_id]);
+$course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$course) {
+    echo "<p>ไม่พบคอร์สที่ต้องการ</p>";
+    include 'includes/course_footer.php';
+    exit();
+}
+
+$stmt = $pdo->prepare("SELECT * FROM chapters WHERE course_id = ? ORDER BY order_number ASC");
+$stmt->execute([$course_id]);
+$chapters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$first_video = null;
+if (count($chapters) > 0) {
+    $first_chapter_id = $chapters[0]['id'];
+    $stmt = $pdo->prepare("SELECT * FROM videos WHERE chapter_id = ? ORDER BY order_number ASC LIMIT 1");
+    $stmt->execute([$first_chapter_id]);
+    $first_video = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+$user_has_access = false;
+if (isset($user_id)) {
+    $stmt = $pdo->prepare("SELECT * FROM user_courses WHERE user_id = ? AND course_id = ?");
+    $stmt->execute([$user_id, $course_id]);
+    $user_has_access = $stmt->rowCount() > 0;
+}
+
+// คำนวณเปอร์เซ็นต์ความคืบหน้า
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM videos WHERE course_id = ?");
+$stmt->execute([$course_id]);
+$total_videos = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM user_videos WHERE user_id = ? AND watched = 1 AND video_id IN (SELECT id FROM videos WHERE course_id = ?)");
+$stmt->execute([$user_id, $course_id]);
+$watched_videos = $stmt->fetchColumn();
+
+$progress_percent = ($total_videos > 0) ? ($watched_videos / $total_videos) * 100 : 0;
+$progress_percent = min($progress_percent, 100); // จำกัดเปอร์เซ็นต์ความคืบหน้าไม่ให้เกิน 100%
+?>
+
+<div class="container course-detail-container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="course-detail-video mb-4">
+                <h2 class="course-title"><?php echo htmlspecialchars($course['title']); ?></h2>
+                <?php if ($first_video) : ?>
+                    <div id="video-content">
+                        <h4><?php echo htmlspecialchars($first_video['title']); ?></h4>
+                        <video controls class="w-100" onended="updateProgress(<?php echo $first_video['id']; ?>)">
+                            <source src="http://localhost:8888/me/<?php echo htmlspecialchars($first_video['video_url']); ?>" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <p><?php echo nl2br(htmlspecialchars($first_video['description'])); ?></p>
+                    </div>
+                <?php else : ?>
+                    <p>ไม่มีวิดีโอสำหรับบทแรก</p>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="course-progress mb-4">
+                <h4>ความคืบหน้าของคุณ</h4>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: <?php echo $progress_percent; ?>%;" aria-valuenow="<?php echo $progress_percent; ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $progress_percent; ?>%</div>
+                </div>
+                <div class="mt-3 button-container">
+                    <a href="#" class="btn btn-primary custom-btn">ดาวน์โหลดเอกสารประกอบการเรียน</a>
+                    <a href="#" class="btn btn-success custom-btn">รับใบรับรอง</a>
+                </div>
+            </div>
+            <div class="chapter-list">
+                <?php if (count($chapters) > 0) : ?>
+                    <?php foreach ($chapters as $chapter) : ?>
+                        <div class="chapter-item mb-3">
+                            <h5 class="chapter-title"><?php echo htmlspecialchars($chapter['title']); ?></h5>
+                            <?php
+                            $stmt = $pdo->prepare("SELECT * FROM videos WHERE chapter_id = ? ORDER BY order_number ASC");
+                            $stmt->execute([$chapter['id']]);
+                            $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            ?>
+                            <ul class="list-group">
+                                <?php if (count($videos) > 0) : ?>
+                                    <?php foreach ($videos as $video) : ?>
+                                        <li class="list-group-item">
+                                            <a href="javascript:void(0);" onclick="loadVideo('http://localhost:8888/me/<?php echo htmlspecialchars($video['video_url']); ?>', '<?php echo htmlspecialchars($video['title']); ?>', '<?php echo nl2br(htmlspecialchars($video['description'])); ?>', <?php echo $video['id']; ?>);">
+                                                <?php echo htmlspecialchars($video['title']); ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <li class="list-group-item">ไม่มีวิดีโอในบทนี้</li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <p>ไม่มีบทในคอร์สนี้</p>
+                <?php endif; ?>
+                <div class="chapter-item mb-3">
+                    <h5 class="chapter-title">แบบฝึกหัด</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="exercise.php?id=<?php echo $course_id; ?>">ทำแบบฝึกหัด</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadVideo(videoUrl, title, description, videoId) {
+        document.getElementById('video-content').innerHTML = `
+            <h4>${title}</h4>
+            <video controls class="w-100" onended="updateProgress(${videoId})">
+                <source src="${videoUrl}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <p>${description}</p>
+        `;
+    }
+
+    function updateProgress(videoId) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "update_progress.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send("video_id=" + videoId);
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                location.reload();
+            }
+        };
+    }
+</script>
+
+<?php include 'includes/course_footer.php'; ?>

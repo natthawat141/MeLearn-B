@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+- phpMyAdmin XML Dump
+- version 5.2.0
+- https://www.phpmyadmin.net
+-
+- Host: localhost:8889
+- Generation Time: Jul 15, 2024 at 02:18 AM
+- Server version: 5.7.39
+- PHP Version: 8.2.0
+-->
+
+<pma_xml_export version="1.0" xmlns:pma="https://www.phpmyadmin.net/some_doc_url/">
+    <!--
+    - Structure schemas
+    -->
+    <pma:structure_schemas>
+        <pma:database name="new" collation="utf8_general_ci" charset="utf8">
+            <pma:table name="admins">
+                CREATE TABLE `admins` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `username` varchar(50) NOT NULL,
+                  `email` varchar(100) NOT NULL,
+                  `password` varchar(255) NOT NULL,
+                  `role` varchar(20) NOT NULL DEFAULT &#039;admin&#039;,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `username` (`username`),
+                  UNIQUE KEY `email` (`email`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="certificates">
+                CREATE TABLE `certificates` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) NOT NULL,
+                  `course_id` int(11) NOT NULL,
+                  `issue_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `unique_user_course` (`user_id`,`course_id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="chapters">
+                CREATE TABLE `chapters` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `course_id` int(11) NOT NULL,
+                  `title` varchar(100) DEFAULT NULL,
+                  `description` text,
+                  `order_number` int(11) DEFAULT NULL,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  KEY `course_id` (`course_id`),
+                  CONSTRAINT `chapters_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="courses">
+                CREATE TABLE `courses` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `title` varchar(100) NOT NULL,
+                  `course_name` varchar(100) DEFAULT NULL,
+                  `description` text,
+                  `thumbnail` varchar(255) DEFAULT NULL,
+                  `video_url` varchar(255) NOT NULL,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="exercises">
+                CREATE TABLE `exercises` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `course_id` int(11) DEFAULT NULL,
+                  `question` text NOT NULL,
+                  `option1` varchar(255) NOT NULL,
+                  `option2` varchar(255) NOT NULL,
+                  `option3` varchar(255) NOT NULL,
+                  `option4` varchar(255) NOT NULL,
+                  `correct_answer` int(11) NOT NULL,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  KEY `course_id` (`course_id`),
+                  CONSTRAINT `exercises_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="redeem_codes">
+                CREATE TABLE `redeem_codes` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `code` varchar(20) NOT NULL,
+                  `course_id` int(11) DEFAULT NULL,
+                  `is_used` tinyint(1) DEFAULT &#039;0&#039;,
+                  `used_by` int(11) DEFAULT NULL,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `code` (`code`),
+                  KEY `course_id` (`course_id`),
+                  KEY `used_by` (`used_by`),
+                  CONSTRAINT `redeem_codes_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+                  CONSTRAINT `redeem_codes_ibfk_2` FOREIGN KEY (`used_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="users">
+                CREATE TABLE `users` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `username` varchar(50) NOT NULL,
+                  `name` varchar(100) NOT NULL,
+                  `surname` varchar(100) NOT NULL,
+                  `email` varchar(100) NOT NULL,
+                  `password` varchar(255) NOT NULL,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `username` (`username`),
+                  UNIQUE KEY `email` (`email`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="user_courses">
+                CREATE TABLE `user_courses` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) DEFAULT NULL,
+                  `course_id` int(11) DEFAULT NULL,
+                  `completed` tinyint(1) DEFAULT &#039;0&#039;,
+                  `certificate_issued` tinyint(1) DEFAULT &#039;0&#039;,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  KEY `user_id` (`user_id`),
+                  KEY `course_id` (`course_id`),
+                  CONSTRAINT `user_courses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+                  CONSTRAINT `user_courses_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="user_exercise_results">
+                CREATE TABLE `user_exercise_results` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) NOT NULL,
+                  `course_id` int(11) NOT NULL,
+                  `score` decimal(5,2) NOT NULL,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `unique_user_course` (`user_id`,`course_id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="user_questions">
+                CREATE TABLE `user_questions` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) NOT NULL,
+                  `question` text NOT NULL,
+                  `answer` text,
+                  `status` varchar(50) DEFAULT &#039;pending&#039;,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `answered_at` timestamp NULL DEFAULT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="user_videos">
+                CREATE TABLE `user_videos` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `user_id` int(11) NOT NULL,
+                  `video_id` int(11) NOT NULL,
+                  `watched` tinyint(1) DEFAULT &#039;0&#039;,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  KEY `user_id` (`user_id`),
+                  KEY `video_id` (`video_id`),
+                  CONSTRAINT `user_videos_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+                  CONSTRAINT `user_videos_ibfk_2` FOREIGN KEY (`video_id`) REFERENCES `videos` (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+            </pma:table>
+            <pma:table name="videos">
+                CREATE TABLE `videos` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `course_id` int(11) NOT NULL,
+                  `chapter_id` int(11) DEFAULT NULL,
+                  `title` varchar(100) NOT NULL,
+                  `description` text,
+                  `video_url` varchar(255) NOT NULL,
+                  `order_number` int(11) DEFAULT &#039;0&#039;,
+                  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`id`),
+                  KEY `course_id` (`course_id`),
+                  KEY `chapter_id` (`chapter_id`),
+                  CONSTRAINT `videos_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
+                  CONSTRAINT `videos_ibfk_2` FOREIGN KEY (`chapter_id`) REFERENCES `chapters` (`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+            </pma:table>
+        </pma:database>
+    </pma:structure_schemas>
+
+    <!--
+    - Database: 'new'
+    -->
+    <database name="new">
+        <!-- Table admins -->
+        <table name="admins">
+            <column name="id">1</column>
+            <column name="username">bew</column>
+            <column name="email">bill@gmail.com</column>
+            <column name="password">$2y$10$z3foFNrv55GP0aIe.loPIOWI7FXDs2as.M.OQSq0M5Eo75ZnSP/9q</column>
+            <column name="role">admin</column>
+            <column name="created_at">2024-07-10 14:24:04</column>
+            <column name="updated_at">2024-07-10 14:24:04</column>
+        </table>
+        <!-- Table certificates -->
+        <table name="certificates">
+            <column name="id">1</column>
+            <column name="user_id">1</column>
+            <column name="course_id">1</column>
+            <column name="issue_date">2024-07-14 16:10:45</column>
+            <column name="created_at">2024-07-13 12:57:30</column>
+            <column name="updated_at">2024-07-14 16:10:45</column>
+        </table>
+        <table name="certificates">
+            <column name="id">4</column>
+            <column name="user_id">2</column>
+            <column name="course_id">1</column>
+            <column name="issue_date">2024-07-14 17:07:24</column>
+            <column name="created_at">2024-07-14 17:07:24</column>
+            <column name="updated_at">2024-07-14 17:07:24</column>
+        </table>
+        <table name="certificates">
+            <column name="id">5</column>
+            <column name="user_id">2</column>
+            <column name="course_id">2</column>
+            <column name="issue_date">2024-07-14 21:52:00</column>
+            <column name="created_at">2024-07-14 21:31:27</column>
+            <column name="updated_at">2024-07-14 21:52:00</column>
+        </table>
+        <table name="certificates">
+            <column name="id">8</column>
+            <column name="user_id">3</column>
+            <column name="course_id">1</column>
+            <column name="issue_date">2024-07-14 22:24:55</column>
+            <column name="created_at">2024-07-14 22:24:55</column>
+            <column name="updated_at">2024-07-14 22:24:55</column>
+        </table>
+        <table name="certificates">
+            <column name="id">9</column>
+            <column name="user_id">3</column>
+            <column name="course_id">2</column>
+            <column name="issue_date">2024-07-14 22:51:58</column>
+            <column name="created_at">2024-07-14 22:51:58</column>
+            <column name="updated_at">2024-07-14 22:51:58</column>
+        </table>
+        <!-- Table chapters -->
+        <table name="chapters">
+            <column name="id">1</column>
+            <column name="course_id">1</column>
+            <column name="title">บทที่1</column>
+            <column name="description">บทที่1</column>
+            <column name="order_number">1</column>
+            <column name="created_at">2024-07-10 11:46:47</column>
+            <column name="updated_at">2024-07-13 11:13:10</column>
+        </table>
+        <table name="chapters">
+            <column name="id">2</column>
+            <column name="course_id">1</column>
+            <column name="title">บทที่2</column>
+            <column name="description">test</column>
+            <column name="order_number">2</column>
+            <column name="created_at">2024-07-10 14:24:51</column>
+            <column name="updated_at">2024-07-13 11:13:35</column>
+        </table>
+        <table name="chapters">
+            <column name="id">3</column>
+            <column name="course_id">2</column>
+            <column name="title">แนะนำ course เรียน</column>
+            <column name="description">แนะนำ course เรียน</column>
+            <column name="order_number">1</column>
+            <column name="created_at">2024-07-14 21:20:04</column>
+            <column name="updated_at">2024-07-14 21:20:04</column>
+        </table>
+        <table name="chapters">
+            <column name="id">4</column>
+            <column name="course_id">1</column>
+            <column name="title">แนะนำ course เรียน</column>
+            <column name="description">แนะนำ course เรียน</column>
+            <column name="order_number">1</column>
+            <column name="created_at">2024-07-15 08:55:18</column>
+            <column name="updated_at">2024-07-15 08:55:18</column>
+        </table>
+        <!-- Table courses -->
+        <table name="courses">
+            <column name="id">1</column>
+            <column name="title">พื้นฐาน Cybersecurity ที่สำคัญเพื่อการปกป้องระบบและข้อมูล</column>
+            <column name="course_name">basic Cybersecurity</column>
+            <column name="description">พื้นฐาน Cybersecurity ที่สำคัญเพื่อการปกป้องระบบและข้อมูล
+   อธิบายวัตถุประสงค์และความสำคัญของความมั่นคงปลอดภัยทางไซเบอร์ได้
+   ระบุความเสี่ยงจากการรั่วไหลของข้อมูลและวิธีการป้องกันได้</column>
+            <column name="thumbnail">../uploads/thumbnails/melearn.jpg</column>
+            <column name="video_url"></column>
+            <column name="created_at">2024-07-10 11:46:25</column>
+            <column name="updated_at">2024-07-14 16:38:03</column>
+        </table>
+        <table name="courses">
+            <column name="id">2</column>
+            <column name="title">ทดสอบระบบ course เรียน</column>
+            <column name="course_name">course1</column>
+            <column name="description">test</column>
+            <column name="thumbnail">../uploads/thumbnails/resources.png</column>
+            <column name="video_url"></column>
+            <column name="created_at">2024-07-11 11:23:20</column>
+            <column name="updated_at">2024-07-14 21:20:42</column>
+        </table>
+        <table name="courses">
+            <column name="id">7</column>
+            <column name="title">ทดสอบระบบ course เรียน2</column>
+            <column name="course_name">test coures 2</column>
+            <column name="description">
+Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos quasi, amet nostrum voluptatum consequuntur doloribus recusandae dolore laborum vel atque. Autem, corrupti ratione.
+</column>
+            <column name="thumbnail">../uploads/thumbnails/melearn.jpg</column>
+            <column name="video_url"></column>
+            <column name="created_at">2024-07-15 00:29:55</column>
+            <column name="updated_at">2024-07-15 00:29:55</column>
+        </table>
+        <!-- Table exercises -->
+        <table name="exercises">
+            <column name="id">3</column>
+            <column name="course_id">1</column>
+            <column name="question">test1</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">1</column>
+            <column name="created_at">2024-07-13 10:59:33</column>
+            <column name="updated_at">2024-07-13 10:59:33</column>
+        </table>
+        <table name="exercises">
+            <column name="id">4</column>
+            <column name="course_id">1</column>
+            <column name="question">test1</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">1</column>
+            <column name="created_at">2024-07-13 10:59:41</column>
+            <column name="updated_at">2024-07-13 10:59:41</column>
+        </table>
+        <table name="exercises">
+            <column name="id">5</column>
+            <column name="course_id">1</column>
+            <column name="question">test1</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">1</column>
+            <column name="created_at">2024-07-13 11:09:38</column>
+            <column name="updated_at">2024-07-13 11:09:38</column>
+        </table>
+        <table name="exercises">
+            <column name="id">6</column>
+            <column name="course_id">1</column>
+            <column name="question">test1</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">1</column>
+            <column name="created_at">2024-07-13 11:11:17</column>
+            <column name="updated_at">2024-07-13 11:11:17</column>
+        </table>
+        <table name="exercises">
+            <column name="id">7</column>
+            <column name="course_id">1</column>
+            <column name="question">test1</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">1</column>
+            <column name="created_at">2024-07-13 11:11:20</column>
+            <column name="updated_at">2024-07-13 11:11:20</column>
+        </table>
+        <table name="exercises">
+            <column name="id">8</column>
+            <column name="course_id">2</column>
+            <column name="question">test2</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">2</column>
+            <column name="created_at">2024-07-14 21:30:46</column>
+            <column name="updated_at">2024-07-14 21:30:46</column>
+        </table>
+        <table name="exercises">
+            <column name="id">9</column>
+            <column name="course_id">2</column>
+            <column name="question">test2</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">2</column>
+            <column name="created_at">2024-07-14 21:31:07</column>
+            <column name="updated_at">2024-07-14 21:31:07</column>
+        </table>
+        <table name="exercises">
+            <column name="id">10</column>
+            <column name="course_id">2</column>
+            <column name="question">test2</column>
+            <column name="option1">1</column>
+            <column name="option2">2</column>
+            <column name="option3">3</column>
+            <column name="option4">4</column>
+            <column name="correct_answer">2</column>
+            <column name="created_at">2024-07-14 21:31:15</column>
+            <column name="updated_at">2024-07-14 21:31:15</column>
+        </table>
+        <!-- Table redeem_codes -->
+        <table name="redeem_codes">
+            <column name="id">1</column>
+            <column name="code">Y8OUZJ8R</column>
+            <column name="course_id">1</column>
+            <column name="is_used">1</column>
+            <column name="used_by">1</column>
+            <column name="created_at">2024-07-10 14:26:28</column>
+        </table>
+        <table name="redeem_codes">
+            <column name="id">2</column>
+            <column name="code">DTZ40MLU</column>
+            <column name="course_id">1</column>
+            <column name="is_used">1</column>
+            <column name="used_by">2</column>
+            <column name="created_at">2024-07-14 16:51:36</column>
+        </table>
+        <table name="redeem_codes">
+            <column name="id">3</column>
+            <column name="code">PQA9C3IT</column>
+            <column name="course_id">2</column>
+            <column name="is_used">1</column>
+            <column name="used_by">2</column>
+            <column name="created_at">2024-07-14 21:30:00</column>
+        </table>
+        <table name="redeem_codes">
+            <column name="id">4</column>
+            <column name="code">R66ZYQVI</column>
+            <column name="course_id">2</column>
+            <column name="is_used">1</column>
+            <column name="used_by">3</column>
+            <column name="created_at">2024-07-14 22:18:04</column>
+        </table>
+        <table name="redeem_codes">
+            <column name="id">5</column>
+            <column name="code">TFO8OOFO</column>
+            <column name="course_id">1</column>
+            <column name="is_used">1</column>
+            <column name="used_by">3</column>
+            <column name="created_at">2024-07-14 22:22:38</column>
+        </table>
+        <table name="redeem_codes">
+            <column name="id">6</column>
+            <column name="code">EMSXBYHT</column>
+            <column name="course_id">1</column>
+            <column name="is_used">0</column>
+            <column name="used_by">NULL</column>
+            <column name="created_at">2024-07-14 22:35:41</column>
+        </table>
+        <!-- Table users -->
+        <table name="users">
+            <column name="id">1</column>
+            <column name="username">natthawat123</column>
+            <column name="name">natthawat</column>
+            <column name="surname">sawatdee</column>
+            <column name="email">natthawat123@gmail.com</column>
+            <column name="password">$2y$10$EGYLfTstu6aw409VH.pec.shgP3FzF7vLAkgRu0OWpZ7tBHHzjarW</column>
+            <column name="created_at">2024-07-10 14:18:38</column>
+            <column name="updated_at">2024-07-10 14:18:38</column>
+        </table>
+        <table name="users">
+            <column name="id">2</column>
+            <column name="username">bill123</column>
+            <column name="name">natthawat</column>
+            <column name="surname">sawatdee</column>
+            <column name="email">bill@gmail.com</column>
+            <column name="password">$2y$10$f/wdVJ55DsN0ZGFk36W/telNNOJHkJyVnQ6YBSpjyYBglL6OEgUyK</column>
+            <column name="created_at">2024-07-14 16:41:07</column>
+            <column name="updated_at">2024-07-14 16:41:07</column>
+        </table>
+        <table name="users">
+            <column name="id">3</column>
+            <column name="username">bew111</column>
+            <column name="name">natthawat</column>
+            <column name="surname">sawatdee</column>
+            <column name="email">bew@gmail.com</column>
+            <column name="password">$2y$10$ZEsmTB79nWCJU0gVDE3Lr.JXUTZFRGAF4Vy9j4Nton/8Xh4XLNw5S</column>
+            <column name="created_at">2024-07-14 22:23:49</column>
+            <column name="updated_at">2024-07-14 22:29:17</column>
+        </table>
+        <!-- Table user_courses -->
+        <table name="user_courses">
+            <column name="id">1</column>
+            <column name="user_id">1</column>
+            <column name="course_id">1</column>
+            <column name="completed">1</column>
+            <column name="certificate_issued">0</column>
+            <column name="created_at">2024-07-10 14:26:42</column>
+            <column name="updated_at">2024-07-13 12:46:06</column>
+        </table>
+        <table name="user_courses">
+            <column name="id">2</column>
+            <column name="user_id">2</column>
+            <column name="course_id">1</column>
+            <column name="completed">1</column>
+            <column name="certificate_issued">0</column>
+            <column name="created_at">2024-07-14 16:51:53</column>
+            <column name="updated_at">2024-07-14 17:07:24</column>
+        </table>
+        <table name="user_courses">
+            <column name="id">3</column>
+            <column name="user_id">2</column>
+            <column name="course_id">2</column>
+            <column name="completed">1</column>
+            <column name="certificate_issued">0</column>
+            <column name="created_at">2024-07-14 21:30:05</column>
+            <column name="updated_at">2024-07-14 21:31:27</column>
+        </table>
+        <table name="user_courses">
+            <column name="id">4</column>
+            <column name="user_id">3</column>
+            <column name="course_id">1</column>
+            <column name="completed">1</column>
+            <column name="certificate_issued">0</column>
+            <column name="created_at">2024-07-14 22:24:02</column>
+            <column name="updated_at">2024-07-14 22:24:55</column>
+        </table>
+        <table name="user_courses">
+            <column name="id">5</column>
+            <column name="user_id">3</column>
+            <column name="course_id">2</column>
+            <column name="completed">1</column>
+            <column name="certificate_issued">0</column>
+            <column name="created_at">2024-07-14 22:51:35</column>
+            <column name="updated_at">2024-07-14 22:51:58</column>
+        </table>
+        <!-- Table user_exercise_results -->
+        <table name="user_exercise_results">
+            <column name="id">1</column>
+            <column name="user_id">1</column>
+            <column name="course_id">1</column>
+            <column name="score">100.00</column>
+            <column name="created_at">2024-07-13 12:45:43</column>
+            <column name="updated_at">2024-07-13 17:24:46</column>
+        </table>
+        <table name="user_exercise_results">
+            <column name="id">4</column>
+            <column name="user_id">2</column>
+            <column name="course_id">1</column>
+            <column name="score">100.00</column>
+            <column name="created_at">2024-07-14 17:07:24</column>
+            <column name="updated_at">2024-07-14 17:07:24</column>
+        </table>
+        <table name="user_exercise_results">
+            <column name="id">5</column>
+            <column name="user_id">2</column>
+            <column name="course_id">2</column>
+            <column name="score">100.00</column>
+            <column name="created_at">2024-07-14 21:31:27</column>
+            <column name="updated_at">2024-07-14 21:31:27</column>
+        </table>
+        <table name="user_exercise_results">
+            <column name="id">8</column>
+            <column name="user_id">3</column>
+            <column name="course_id">1</column>
+            <column name="score">100.00</column>
+            <column name="created_at">2024-07-14 22:24:55</column>
+            <column name="updated_at">2024-07-14 22:24:55</column>
+        </table>
+        <table name="user_exercise_results">
+            <column name="id">9</column>
+            <column name="user_id">3</column>
+            <column name="course_id">2</column>
+            <column name="score">100.00</column>
+            <column name="created_at">2024-07-14 22:51:58</column>
+            <column name="updated_at">2024-07-14 22:51:58</column>
+        </table>
+        <!-- Table user_questions -->
+        <!-- Table user_videos -->
+        <table name="user_videos">
+            <column name="id">8</column>
+            <column name="user_id">3</column>
+            <column name="video_id">4</column>
+            <column name="watched">1</column>
+            <column name="created_at">2024-07-15 00:28:44</column>
+            <column name="updated_at">2024-07-15 00:28:44</column>
+        </table>
+        <table name="user_videos">
+            <column name="id">9</column>
+            <column name="user_id">3</column>
+            <column name="video_id">4</column>
+            <column name="watched">1</column>
+            <column name="created_at">2024-07-15 00:29:06</column>
+            <column name="updated_at">2024-07-15 00:29:06</column>
+        </table>
+        <table name="user_videos">
+            <column name="id">10</column>
+            <column name="user_id">3</column>
+            <column name="video_id">1</column>
+            <column name="watched">1</column>
+            <column name="created_at">2024-07-15 00:42:09</column>
+            <column name="updated_at">2024-07-15 00:42:09</column>
+        </table>
+        <table name="user_videos">
+            <column name="id">11</column>
+            <column name="user_id">3</column>
+            <column name="video_id">1</column>
+            <column name="watched">1</column>
+            <column name="created_at">2024-07-15 00:42:24</column>
+            <column name="updated_at">2024-07-15 00:42:24</column>
+        </table>
+        <table name="user_videos">
+            <column name="id">12</column>
+            <column name="user_id">3</column>
+            <column name="video_id">2</column>
+            <column name="watched">1</column>
+            <column name="created_at">2024-07-15 00:42:36</column>
+            <column name="updated_at">2024-07-15 00:42:36</column>
+        </table>
+        <!-- Table videos -->
+        <table name="videos">
+            <column name="id">1</column>
+            <column name="course_id">1</column>
+            <column name="chapter_id">1</column>
+            <column name="title">แนะนำ course เรียน</column>
+            <column name="description">แนะนำ course เรียน</column>
+            <column name="video_url">/uploads/videos/668e12569d042.mp4</column>
+            <column name="order_number">2</column>
+            <column name="created_at">2024-07-10 11:47:18</column>
+            <column name="updated_at">2024-07-13 10:58:20</column>
+        </table>
+        <table name="videos">
+            <column name="id">2</column>
+            <column name="course_id">1</column>
+            <column name="chapter_id">2</column>
+            <column name="title">อธิบายวัตถุประสงค์และความสำคัญของความมั่นคงปลอดภัยทางไซเบอร์ได้</column>
+            <column name="description">อธิบายวัตถุประสงค์และความสำคัญของความมั่นคงปลอดภัยทางไซเบอร์ได้</column>
+            <column name="video_url">/uploads/videos/6690cd064635c.mp4</column>
+            <column name="order_number">1</column>
+            <column name="created_at">2024-07-12 13:28:22</column>
+            <column name="updated_at">2024-07-13 10:58:10</column>
+        </table>
+        <table name="videos">
+            <column name="id">4</column>
+            <column name="course_id">2</column>
+            <column name="chapter_id">3</column>
+            <column name="title">test</column>
+            <column name="description">test</column>
+            <column name="video_url">/uploads/videos/6693e0df8f4f8.mp4</column>
+            <column name="order_number">1</column>
+            <column name="created_at">2024-07-14 21:29:51</column>
+            <column name="updated_at">2024-07-14 21:29:51</column>
+        </table>
+    </database>
+</pma_xml_export>

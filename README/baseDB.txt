@@ -1,0 +1,157 @@
+-- Create the database
+CREATE DATABASE baseDB;
+USE MePlus;
+
+-- Create tables and define relationships
+
+-- Table: new_users
+CREATE TABLE new_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100),
+    name VARCHAR(100),
+    surname VARCHAR(100),
+    email VARCHAR(100),
+    password VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Table: new_courses
+CREATE TABLE new_courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100),
+    course_name VARCHAR(100),
+    description TEXT,
+    thumbnail VARCHAR(255),
+    video_url VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Table: new_chapters
+CREATE TABLE new_chapters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT,
+    title VARCHAR(100),
+    description TEXT,
+    order_number INT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES new_courses(id)
+);
+
+-- Table: new_videos
+CREATE TABLE new_videos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT,
+    chapter_id INT,
+    title VARCHAR(100),
+    description TEXT,
+    video_url VARCHAR(255),
+    order_number INT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES new_courses(id),
+    FOREIGN KEY (chapter_id) REFERENCES new_chapters(id)
+);
+
+-- Table: new_exercises
+CREATE TABLE new_exercises (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT,
+    question TEXT,
+    option1 VARCHAR(255),
+    option2 VARCHAR(255),
+    option3 VARCHAR(255),
+    option4 VARCHAR(255),
+    correct_answer INT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES new_courses(id)
+);
+
+-- Table: new_user_videos
+CREATE TABLE new_user_videos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    video_id INT,
+    watched TINYINT(1),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES new_users(id),
+    FOREIGN KEY (video_id) REFERENCES new_videos(id)
+);
+
+-- Table: new_user_courses
+CREATE TABLE new_user_courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    course_id INT,
+    completed TINYINT(1),
+    certificate_issued TINYINT(1),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES new_users(id),
+    FOREIGN KEY (course_id) REFERENCES new_courses(id)
+);
+
+-- Table: new_user_exercise_results
+CREATE TABLE new_user_exercise_results (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    course_id INT,
+    score DECIMAL(5, 2),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES new_users(id),
+    FOREIGN KEY (course_id) REFERENCES new_courses(id)
+);
+
+-- Table: new_admins
+CREATE TABLE new_admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    email VARCHAR(100),
+    password VARCHAR(255),
+    role VARCHAR(20),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Table: new_user_questions
+CREATE TABLE new_user_questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    question TEXT,
+    answer TEXT,
+    status VARCHAR(50),
+    created_at TIMESTAMP,
+    answered_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES new_users(id)
+);
+
+-- Table: new_certificates
+CREATE TABLE new_certificates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    course_id INT,
+    issue_date TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES new_users(id),
+    FOREIGN KEY (course_id) REFERENCES new_courses(id)
+);
+
+-- Table: new_redeem_codes
+CREATE TABLE new_redeem_codes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20),
+    course_id INT,
+    is_used TINYINT(1),
+    used_by INT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES new_courses(id),
+    FOREIGN KEY (used_by) REFERENCES new_users(id)
+);
+
