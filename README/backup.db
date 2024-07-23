@@ -1,0 +1,498 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema MeDB
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema MeDB
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `MeDB` DEFAULT CHARACTER SET utf8 ;
+-- -----------------------------------------------------
+-- Schema new
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema new
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `new` DEFAULT CHARACTER SET utf8 ;
+USE `MeDB` ;
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`admins`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`admins` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'admin',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username` (`username` ASC) VISIBLE,
+  UNIQUE INDEX `email` (`email` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`courses`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`courses` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(100) NOT NULL,
+  `description` TEXT NULL DEFAULT NULL,
+  `thumbnail` VARCHAR(255) NULL DEFAULT NULL,
+  `video_url` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 12
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`chapters`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`chapters` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `course_id` INT(11) NULL DEFAULT NULL,
+  `title` VARCHAR(100) NULL DEFAULT NULL,
+  `description` TEXT NULL DEFAULT NULL,
+  `order_number` INT(11) NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `chapters_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `MeDB`.`courses` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 2
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`exercises`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`exercises` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `course_id` INT(11) NULL DEFAULT NULL,
+  `question` TEXT NOT NULL,
+  `option1` VARCHAR(255) NOT NULL,
+  `option2` VARCHAR(255) NOT NULL,
+  `option3` VARCHAR(255) NOT NULL,
+  `option4` VARCHAR(255) NOT NULL,
+  `correct_answer` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `exercises_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `MeDB`.`courses` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`users` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `surname` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username` (`username` ASC) VISIBLE,
+  UNIQUE INDEX `email` (`email` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`redeem_codes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`redeem_codes` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(20) NOT NULL,
+  `course_id` INT(11) NULL DEFAULT NULL,
+  `is_used` TINYINT(1) NULL DEFAULT '0',
+  `used_by` INT(11) NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `code` (`code` ASC) VISIBLE,
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  INDEX `used_by` (`used_by` ASC) VISIBLE,
+  CONSTRAINT `redeem_codes_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `MeDB`.`courses` (`id`),
+  CONSTRAINT `redeem_codes_ibfk_2`
+    FOREIGN KEY (`used_by`)
+    REFERENCES `MeDB`.`users` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`user_courses`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`user_courses` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NULL DEFAULT NULL,
+  `course_id` INT(11) NULL DEFAULT NULL,
+  `completed` TINYINT(1) NULL DEFAULT '0',
+  `certificate_issued` TINYINT(1) NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  INDEX `user_id` (`user_id` ASC) VISIBLE,
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `user_courses_ibfk_1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `MeDB`.`users` (`id`),
+  CONSTRAINT `user_courses_ibfk_2`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `MeDB`.`courses` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`user_questions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`user_questions` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `question` TEXT NOT NULL,
+  `answer` TEXT NULL DEFAULT NULL,
+  `status` VARCHAR(50) NULL DEFAULT 'pending',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `answered_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `MeDB`.`videos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `MeDB`.`videos` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `course_id` INT(11) NOT NULL,
+  `chapter_id` INT(11) NULL DEFAULT NULL,
+  `title` VARCHAR(100) NOT NULL,
+  `description` TEXT NULL DEFAULT NULL,
+  `video_url` VARCHAR(255) NOT NULL,
+  `order_number` INT(11) NULL DEFAULT '0',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  INDEX `chapter_id` (`chapter_id` ASC) VISIBLE,
+  CONSTRAINT `videos_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `MeDB`.`courses` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `videos_ibfk_2`
+    FOREIGN KEY (`chapter_id`)
+    REFERENCES `MeDB`.`chapters` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 11
+DEFAULT CHARACTER SET = utf8;
+
+USE `new` ;
+
+-- -----------------------------------------------------
+-- Table `new`.`admins`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`admins` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'admin',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username` (`username` ASC) VISIBLE,
+  UNIQUE INDEX `email` (`email` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`certificates`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`certificates` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `course_id` INT(11) NOT NULL,
+  `issue_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `unique_user_course` (`user_id` ASC, `course_id` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 16
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`courses`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`courses` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(100) NOT NULL,
+  `course_name` VARCHAR(100) NULL DEFAULT NULL,
+  `description` TEXT NULL DEFAULT NULL,
+  `thumbnail` VARCHAR(255) NULL DEFAULT NULL,
+  `video_url` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 14
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`chapters`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`chapters` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `course_id` INT(11) NOT NULL,
+  `title` VARCHAR(100) NULL DEFAULT NULL,
+  `description` TEXT NULL DEFAULT NULL,
+  `order_number` INT(11) NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `chapters_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `new`.`courses` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 12
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`exercises`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`exercises` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `course_id` INT(11) NULL DEFAULT NULL,
+  `question` TEXT NOT NULL,
+  `option1` VARCHAR(255) NOT NULL,
+  `option2` VARCHAR(255) NOT NULL,
+  `option3` VARCHAR(255) NOT NULL,
+  `option4` VARCHAR(255) NOT NULL,
+  `correct_answer` INT(11) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `exercises_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `new`.`courses` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 16
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`login_attempts`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`login_attempts` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(255) NOT NULL,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `attempt_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 35
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`users` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `surname` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `email_verified` TINYINT(1) NULL DEFAULT '0',
+  `verification_token` VARCHAR(255) NULL DEFAULT NULL,
+  `reset_token` VARCHAR(255) NULL DEFAULT NULL,
+  `reset_token_expires` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username` (`username` ASC) VISIBLE,
+  UNIQUE INDEX `email` (`email` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 9
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`redeem_codes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`redeem_codes` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(20) NOT NULL,
+  `course_id` INT(11) NULL DEFAULT NULL,
+  `is_used` TINYINT(1) NULL DEFAULT '0',
+  `used_by` INT(11) NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `code` (`code` ASC) VISIBLE,
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  INDEX `used_by` (`used_by` ASC) VISIBLE,
+  CONSTRAINT `redeem_codes_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `new`.`courses` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `redeem_codes_ibfk_2`
+    FOREIGN KEY (`used_by`)
+    REFERENCES `new`.`users` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 22
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`user_courses`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`user_courses` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NULL DEFAULT NULL,
+  `course_id` INT(11) NULL DEFAULT NULL,
+  `completed` TINYINT(1) NULL DEFAULT '0',
+  `certificate_issued` TINYINT(1) NULL DEFAULT '0',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `user_id` (`user_id` ASC) VISIBLE,
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `user_courses_ibfk_1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `new`.`users` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `user_courses_ibfk_2`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `new`.`courses` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 17
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`user_exercise_results`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`user_exercise_results` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `course_id` INT(11) NOT NULL,
+  `score` DECIMAL(5,2) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `unique_user_course` (`user_id` ASC, `course_id` ASC) VISIBLE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 23
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`user_questions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`user_questions` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `question` TEXT NOT NULL,
+  `answer` TEXT NULL DEFAULT NULL,
+  `status` VARCHAR(50) NULL DEFAULT 'pending',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `answered_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`videos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`videos` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `course_id` INT(11) NOT NULL,
+  `chapter_id` INT(11) NULL DEFAULT NULL,
+  `title` VARCHAR(100) NOT NULL,
+  `description` TEXT NULL DEFAULT NULL,
+  `video_url` VARCHAR(255) NOT NULL,
+  `order_number` INT(11) NULL DEFAULT '0',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  INDEX `chapter_id` (`chapter_id` ASC) VISIBLE,
+  CONSTRAINT `videos_ibfk_1`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `new`.`courses` (`id`)
+    ON DELETE CASCADE,
+  CONSTRAINT `videos_ibfk_2`
+    FOREIGN KEY (`chapter_id`)
+    REFERENCES `new`.`chapters` (`id`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 15
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `new`.`user_videos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `new`.`user_videos` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `video_id` INT(11) NOT NULL,
+  `watched` TINYINT(1) NULL DEFAULT '0',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `user_id` (`user_id` ASC) VISIBLE,
+  INDEX `video_id` (`video_id` ASC) VISIBLE,
+  CONSTRAINT `user_videos_ibfk_1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `new`.`users` (`id`),
+  CONSTRAINT `user_videos_ibfk_2`
+    FOREIGN KEY (`video_id`)
+    REFERENCES `new`.`videos` (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 33
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
