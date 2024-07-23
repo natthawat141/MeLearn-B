@@ -1,4 +1,5 @@
 <!-- index.php -->
+
 <?php
 include 'includes/admin_header.php';
 require_once '../config/database.php';
