@@ -1,5 +1,6 @@
 <!-- index.php -->
 <?php
+echo"hello"
 session_start();
 require_once 'config/database.php';
 include 'user/includes/user_header.php';
